@@ -1,0 +1,153 @@
+* {
+	transition: .2s;
+	font-family: 'DotGothic16';
+	user-select: none;
+}
+
+html {
+	margin: 0;
+	padding: 0;
+}
+
+.menu {
+	position: absolute;
+	width: 50%;
+	height: 500px;
+	border-radius: 5px;
+	background-color: #2e333f;
+	left:25%;
+	top:25%;
+}
+
+.menuTitle {
+	width: 100%;
+	background-color: #2e333f;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	height: 5%;
+	border-radius: 5px 5px 0 0;
+}
+
+.menuTitle > .title {
+	color: #aaa;
+	font-size: 1vw;
+	position: absolute;
+	top:20%;
+}
+
+.menuTitle > .settings {
+	width: 1.5vw;
+	height: 1.5vw;
+	text-align: center;
+	color: #aaa;
+	font-size: 1.25vw;
+	background-color: #1a222b;
+	border-radius: 100%;
+	line-height: 1.4vw;
+	position: absolute;
+	top: 20%;
+	right: 9%;
+}
+
+.menuTitle > .settings:hover {
+	cursor: pointer;
+	color: #CCCC74;
+}
+
+.menuTitle > .move {
+	width: 1.5vw;
+	height: 1.5vw;
+	text-align: center;
+	color: #aaa;
+	font-size: 1.25vw;
+	background-color: #1a222b;
+	border-radius: 100%;
+	line-height: 1.4vw;
+	position: absolute;
+	top:20%;
+	right: 5%;
+}
+
+.menuTitle > .exit {
+	width: 1.5vw;
+	height: 1.5vw;
+	text-align: center;
+	color: #aaa;
+	font-size: 1.5vw;
+	background-color: #1a222b;
+	border-radius: 100%;
+	line-height: 1vw;
+	position: absolute;
+	top:20%;
+	right: 1%;
+}
+
+.menuTitle > .exit:hover {
+	color: #CC4343;
+	cursor: pointer;
+}
+
+.menuBody {
+	width: 95%;
+	height: 87%;
+	margin-top: 2%;
+	margin-left: 2.5%;
+	display: flex;
+	position: relative;
+}
+
+.menuBody > .class {
+	width: 30%;
+	background-color: #1a222b;
+	border-radius: 5px;
+}
+
+.menuBody > .class > .classElement {
+	color: #aaa;
+	background-color: #141a1f;
+	border-radius: 5px;
+	margin-top: 5%;
+	width: 90%;
+	text-align: center;
+	margin-left: 5%;
+	font-size: 1vw;
+}
+
+.menuBody > .class > .classElement:hover {
+	background-color: #2F3182;
+}
+
+.menuBody > .class > .classElement.active {
+	background-color: #4b4db3;
+}
+
+.menuBody > .list {
+	margin-left: 1%;
+	width: 69%;
+	background-color: #1a222b;
+	border-radius: 5px;
+}
+
+.hiddenmenu {
+	text-align: center;
+	font-size: 2vw;
+	color: #aaa;
+	position: absolute;
+	height: 3vw;
+	width: 3vw;
+	background-color: #1a222b;
+	border-radius: 100%;
+	visibility: hidden;
+}
+
+.hiddenmenu:hover {
+	color: #7c7b7b;
+	cursor: pointer;
+}
+
+.dragging {
+	cursor: move;
+	opacity: 0.5;
+}
