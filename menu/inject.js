@@ -18,7 +18,7 @@ style.textContent = `
   .menu {
     position: absolute;
     width: 50%;
-    height: 500px;
+    height: 35%;
     border-radius: 5px;
     background-color: #2e333f;
     left:25%;
@@ -112,7 +112,8 @@ style.textContent = `
     border-radius: 5px;
   }
 
-  .menuBody > .class > .classElement {
+  .menuBody > .class > .classElement,
+  .menuBody > .class > .settingsNav >.classElement {
     color: #aaa;
     background-color: #141a1f;
     border-radius: 5px;
@@ -121,14 +122,23 @@ style.textContent = `
     text-align: center;
     margin-left: 5%;
     font-size: 1vw;
+    cursor: pointer;
   }
 
-  .menuBody > .class > .classElement:hover {
+  .menuBody > .class > .classElement:hover,
+  .menuBody > .class > .settingsNav >.classElement:hover  {
     background-color: #2F3182;
   }
 
   .menuBody > .class > .classElement.active {
     background-color: #4b4db3;
+  }
+  
+  .menuBody > .class > .settingsNav {
+    position: absolute;
+    bottom: 0;
+    width: 30%;
+    margin-bottom: 1%;
   }
 
   .menuBody > .list {
@@ -151,7 +161,7 @@ style.textContent = `
   }
 
   .menuBody > .list .listElementParent > .listElement{
-    color:#aaa;
+    color: #aaa;
     font-size: 1vw;
   }
 
@@ -171,6 +181,20 @@ style.textContent = `
   .menuBody > .list > .listElementParent > .toggle-label {
     position: absolute;
     right: 2%;
+  }
+
+  .menuBody > .list > .descfunc {
+    display: flex;
+    position: relative;
+    align-items: center;
+    background-color: #141a1f;
+    width: 92%;
+    margin-left: 3%;
+    margin-top: 1%;
+    padding: 1%;
+    border-radius: 5px;
+    color: #aaa;
+    font-size: 1vw;
   }
 
   .hiddenmenu {
@@ -281,38 +305,101 @@ document.head.appendChild(style);
 var functionlist = ['FileData', 'InvisibleText', 'FakeMute'];
 var classesList = ['Global', 'Text', 'Voice'];
 
+
+// --------------------------- Функции ---------------------------
 function getFunctions(func) {
   var classFunc;
   var nameFunc;
   var descFunc;
-  var isFuncSettings;
   switch(func) {
     case 'FileData':
       classFunc = 'Global';
       nameFunc = 'Данные файлов';
       descFunc = 'Изменяет данные файлов';
-      isFuncSettings = true;
-      return [classFunc, nameFunc, descFunc, isFuncSettings];
+      break;
     case 'InvisibleText':
       classFunc = 'Text';
       nameFunc = 'Невидимый текст';
       descFunc = 'Делает текст невидимым';
-      isFuncSettings = false;
-      return [classFunc, nameFunc, descFunc, isFuncSettings];
+      break;
     case 'FakeMute':
       classFunc = 'Voice';
       nameFunc = 'Фейковый мут';
       descFunc = 'Делает фейковый мут';
-      isFuncSettings = false;
-      return [classFunc, nameFunc, descFunc, isFuncSettings];
+      break;
     default:
       classFunc = '';
       nameFunc = '';
       descFunc = ''
-      isFuncSettings = false;
-      return [classFunc, nameFunc, descFunc, isFuncSettings];
+      break;
+  }
+  return [classFunc, nameFunc, descFunc];
+}
+
+// --------------------------- Настройки функций ---------------------------
+
+function openSettings(e) {
+  clearMenu();
+  var main = false;
+  title.textContent = 'Настройки';
+  switch(e) {
+    case 'FileData':
+      
+      break;
+    case 'InvisibleText':
+      
+      break;
+    case 'FakeMute':
+      
+      break;
+    default:
+      main = true;
+      break;
+  }
+  if (!main) {
+    var [classFunc, nameFunc, descFunc] = getFunctions(e);
+    currentClass = classFunc;
+
+    var classElement = document.createElement('div');
+    classElement.classList.add('classElement');
+    classElement.textContent = nameFunc;
+
+    var funcdesc = document.createElement('div');
+    funcdesc.textContent = descFunc;
+    funcdesc.classList.add('descfunc');
+
+    classl.appendChild(classElement);
+    list.appendChild(funcdesc);
+  } else {
+
+  }
+  var settingsNav = document.createElement('div');
+  settingsNav.classList.add('settingsNav');
+  var back = document.createElement('div');
+  back.textContent = 'Назад';
+  back.classList.add('classElement');
+  var resetCurrent = document.createElement('div');
+  resetCurrent.textContent = 'Сбросить';
+  resetCurrent.classList.add('classElement');
+  var resetAll = document.createElement('div');
+  resetAll.textContent = 'Сбросить всё';
+  resetAll.classList.add('classElement');
+  classl.appendChild(settingsNav);
+  settingsNav.appendChild(resetAll);
+  settingsNav.appendChild(resetCurrent);
+  settingsNav.appendChild(back);
+  if(!main) {
+    back.addEventListener('click', () => {
+      loadmenu(currentClass);
+  })
+  } else {
+    back.addEventListener('click', () => {
+      loadmenu('Global');
+    });
   }
 }
+
+var currentClass = 'Global';
 
 var menu = document.createElement('div');
 menu.id = "drag-menu";
@@ -371,6 +458,10 @@ menuBodyList.forEach((e) => {
   menuBody.appendChild(e);
 })
 
+settingsmenu.addEventListener('click', ()=> {
+  openSettings();
+});
+
 function addClasses(e) {
   var classElement = document.createElement('div');
   classElement.classList.add('classElement');
@@ -383,7 +474,7 @@ function addClasses(e) {
       break;
     case 'Text':
       classElementText = 'Текстовый';
-      classid = 'classChat';
+      classid = 'classText';
       break; 
     case 'Voice':
       classElementText = 'Голосовой';
@@ -397,6 +488,9 @@ function addClasses(e) {
   classElement.id = classid;
   classElement.textContent = classElementText;
   classl.appendChild(classElement);
+  classElement.addEventListener('click', () => {
+    loadmenu(e);
+  });
 }
 
 function addFunctions(cl) {
@@ -408,7 +502,7 @@ function addFunctions(cl) {
     var settings = document.createElement('div');
     settings.classList.add('settings');
     settings.textContent = '◉';
-    var [classFunc, nameFunc, descFunc, isFuncSettings] = getFunctions(e);
+    var [classFunc, nameFunc, descFunc] = getFunctions(e);
     if(classFunc == cl) {
       list.appendChild(listElementParent);
       listElement.id = e;
@@ -417,14 +511,34 @@ function addFunctions(cl) {
       listElementParent.innerHTML = listElementParent.innerHTML+`
 						<input type="checkbox" id="${e}Toggle" class="toggle-checkbox">
     					<label for="${e}Toggle" class="toggle-label"></label>`
-      if(isFuncSettings) {
-        listElementParent.appendChild(settings);
-      }
+      listElementParent.appendChild(settings);
+      settings.addEventListener('click', ()=> {
+        var e = settings.parentElement.getElementsByClassName('listElement')[0].id;
+        openSettings(e);
+      })
     }
   })
 }
 
+function clearMenu() {
+  var ce = classl.childElementCount + list.childElementCount;
+  if(ce>0) {
+    classl.childNodes.forEach((e) => {
+      e.remove();
+    })
+    list.childNodes.forEach((e) => {
+      e.remove();
+    })
+    ce = classl.childElementCount + list.childElementCount;
+    if(ce>0)
+      clearMenu();
+  }
+    
+}
+
 function loadmenu(cl) {
+  title.textContent = 'Меню';
+  clearMenu();
   classesList.forEach((e) => {
     addClasses(e);
   });
@@ -432,7 +546,7 @@ function loadmenu(cl) {
   document.getElementById(`class${cl}`).classList.add('active');
 }
 
-loadmenu('Global');
+loadmenu(currentClass);
 
 
 
