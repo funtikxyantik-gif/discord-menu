@@ -1,9 +1,3 @@
-* {
-	transition: .2s;
-	font-family: 'DotGothic16';
-	user-select: none;
-}
-
 html {
 	margin: 0;
 	padding: 0;
@@ -17,6 +11,8 @@ html {
 	background-color: #2e333f;
 	left:25%;
 	top:25%;
+	font-family: 'DotGothic16';
+	user-select: none;
 }
 
 .menuTitle {
@@ -130,6 +126,41 @@ html {
 	border-radius: 5px;
 }
 
+.menuBody > .list > .listElementParent {
+	display: flex;
+	position: relative;
+	align-items: center;
+	background-color: #141a1f;
+	width: 92%;
+	margin-left: 3%;
+	margin-top: 1%;
+	padding: 1%;
+	border-radius: 5px;
+}
+
+.menuBody > .list .listElementParent > .listElement{
+	color:#aaa;
+	font-size: 1vw;
+}
+
+.menuBody > .list > .listElementParent > .settings {
+	position: absolute;
+	font-size: 1.25vw;
+	right: 12%;
+	color: #aaa;
+	cursor: pointer;
+	line-height: 1vw;
+}
+
+.menuBody > .list > .listElementParent > .settings:hover {
+	color: #CCCC74;
+}
+
+.menuBody > .list > .listElementParent > .toggle-label {
+	position: absolute;
+	right: 2%;
+}
+
 .hiddenmenu {
 	text-align: center;
 	font-size: 2vw;
@@ -140,6 +171,8 @@ html {
 	background-color: #1a222b;
 	border-radius: 100%;
 	visibility: hidden;
+	font-size: 2vw;
+	font-family: 'DotGothic16';
 }
 
 .hiddenmenu:hover {
@@ -150,4 +183,45 @@ html {
 .dragging {
 	cursor: move;
 	opacity: 0.5;
+}
+
+.toggle-checkbox {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.toggle-label {
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	gap: 1vw;
+}
+
+.toggle-label:before {
+	content: '';
+	width: 2.5vw;
+	height: 1.25vw;
+	background-color: #923333;
+	border-radius: 5px;
+	transition: background 0.3s;
+}
+
+.toggle-label:after {
+	content: '';
+	position: absolute;
+	width: 1.25vw;
+	height: 1.25vw;
+	background-color: white;
+	border-radius:5px;
+	transition: transform 0.3s;
+}
+
+.toggle-checkbox:checked + .toggle-label:before {
+	background-color: #4CAF50;
+}
+
+.toggle-checkbox:checked + .toggle-label:after {
+	transform: translateX(1.25vw);
 }

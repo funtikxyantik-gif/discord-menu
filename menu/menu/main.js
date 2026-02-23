@@ -56,3 +56,26 @@ hiddenmenu.addEventListener('click', () => {
     openMenu()
 });
 
+const allsettings = document.getElementsByClassName('settings');
+allsettings.array.forEach(e => {
+    if(e.parentElement.classList == 'menuTitle') {
+        e.addEventListener('click', () => {
+            settings('menu');
+        })
+    } else {
+        e.addEventListener('click', () => {
+            settings(e.parentElement.querySelector('div').id);
+        })
+    }
+});
+
+function settings(e) {
+    switch(e) {
+        case 'menu':
+            
+            break;
+        default:
+            
+            break;
+    }
+}
