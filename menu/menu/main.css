@@ -45,6 +45,7 @@ html {
 	position: absolute;
 	top: 20%;
 	right: 9%;
+	transition: .2s ease;
 }
 
 .menuTitle > .settings:hover {
@@ -78,6 +79,7 @@ html {
 	position: absolute;
 	top:20%;
 	right: 1%;
+	transition: .2s ease;
 }
 
 .menuTitle > .exit:hover {
@@ -109,6 +111,7 @@ html {
 	text-align: center;
 	margin-left: 5%;
 	font-size: 1vw;
+	transition: .2s ease;
 }
 
 .menuBody > .class > .classElement:hover {
@@ -150,6 +153,7 @@ html {
 	color: #aaa;
 	cursor: pointer;
 	line-height: 1vw;
+	transition: .2s ease;
 }
 
 .menuBody > .list > .listElementParent > .settings:hover {
@@ -159,6 +163,19 @@ html {
 .menuBody > .list > .listElementParent > .toggle-label {
 	position: absolute;
 	right: 2%;
+}
+
+.menuBody > .list > .listElementParent > .button {
+	color: #aaa;
+	position: absolute;
+	right: 2%;
+	font-size: 1.5vw;
+	cursor: pointer;
+	transition: .2s ease;
+}
+
+.menuBody > .list > .listElementParent > .button:hover {
+	color: #CCCC74;
 }
 
 .hiddenmenu {
@@ -183,6 +200,7 @@ html {
 .dragging {
 	cursor: move;
 	opacity: 0.5;
+	transition: opacity .2s ease;
 }
 
 .toggle-checkbox {

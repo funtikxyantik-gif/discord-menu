@@ -57,6 +57,7 @@ style.textContent = `
     position: absolute;
     top: 20%;
     right: 9%;
+    transition: .2s ease;
   }
 
   .menuTitle > .settings:hover {
@@ -90,6 +91,7 @@ style.textContent = `
     position: absolute;
     top:20%;
     right: 1%;
+    transition: .2s ease;
   }
 
   .menuTitle > .exit:hover {
@@ -123,6 +125,7 @@ style.textContent = `
     margin-left: 5%;
     font-size: 1vw;
     cursor: pointer;
+    transition: .2s ease;
   }
 
   .menuBody > .class > .classElement:hover,
@@ -172,6 +175,7 @@ style.textContent = `
     color: #aaa;
     cursor: pointer;
     line-height: 1vw;
+    transition: .2s ease;
   }
 
   .menuBody > .list > .listElementParent > .settings:hover {
@@ -181,6 +185,19 @@ style.textContent = `
   .menuBody > .list > .listElementParent > .toggle-label {
     position: absolute;
     right: 2%;
+  }
+
+  .menuBody > .list > .listElementParent > .button {
+    color: #aaa;
+    position: absolute;
+    right: 4%;
+    font-size: 1.5vw;
+    cursor: pointer;
+    transition: .2s ease;
+  }
+
+  .menuBody > .list > .listElementParent > .button:hover {
+    color: #CCCC74;
   }
 
   .menuBody > .list > .descfunc {
@@ -195,6 +212,30 @@ style.textContent = `
     border-radius: 5px;
     color: #aaa;
     font-size: 1vw;
+  }
+
+  .menuBody > .notifications-container {
+    text-align: center;
+    width: 100%;
+    font-size: 1.25vw;
+    bottom: 10%;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .menuBody > .notifications-container > .notifications {
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+    width: fit-content;
+    background-color: rgba(20, 26, 31, 1);
+    color: #aaa;
+    border-radius: 5px;
+    padding-left: 1%;
+    padding-right: 1%;
+    pointer-events: none;
+    transition: .2s ease;
+    visibility: hidden;
   }
 
   .hiddenmenu {
@@ -256,6 +297,7 @@ style.textContent = `
   .dragging {
     cursor: move;
     opacity: 0.5;
+    transition: opacity .2s ease;
   }
 
   .toggle-checkbox {
@@ -311,21 +353,25 @@ function getFunctions(func) {
   var classFunc;
   var nameFunc;
   var descFunc;
+  var isButton;
   switch(func) {
     case 'FileData':
       classFunc = 'Global';
       nameFunc = 'Данные файлов';
       descFunc = 'Изменяет данные файлов';
+      isButton = false;
       break;
     case 'InvisibleText':
       classFunc = 'Text';
       nameFunc = 'Невидимый текст';
       descFunc = 'Делает текст невидимым';
+      isButton = true;
       break;
     case 'FakeMute':
       classFunc = 'Voice';
       nameFunc = 'Фейковый мут';
       descFunc = 'Делает фейковый мут';
+      isButton = false;
       break;
     default:
       classFunc = '';
@@ -333,8 +379,107 @@ function getFunctions(func) {
       descFunc = ''
       break;
   }
-  return [classFunc, nameFunc, descFunc];
+  return [classFunc, nameFunc, descFunc, isButton];
 }
+
+var FileDataToggle, FakeMuteToggle = false;
+var checkInterval = null;
+
+function toggleFunc(e) {
+  switch(e) {
+    case 'FileData':
+      FileDataToggle = !FileDataToggle;
+      if(FileDataToggle) {
+
+      }
+      break;
+    case 'InvisibleText':
+      copyToClipboard('123');
+      notification('Текст скопирован');
+      break;
+    case 'FakeMute':
+      FakeMuteToggle = !FakeMuteToggle;
+      if(FakeMuteToggle) {
+        fdOn();
+        notification('Фейковый мут включен');
+      } else {
+        fdOff();
+        notification('Фейковый мут выключен');
+      }
+      break;
+    default:
+      break;
+  }
+}
+
+// Фейковый мут ВКЛ
+
+if (!window._fdTrueOriginalSend) {
+    window._fdTrueOriginalSend = WebSocket.prototype.send;
+}
+
+const decoder = new TextDecoder("utf-8");
+const encoder = new TextEncoder();
+
+function fdOn() {
+    if (WebSocket.prototype.send !== window._fdTrueOriginalSend) {
+        return;
+    }
+
+    const original = window._fdTrueOriginalSend;
+
+    WebSocket.prototype.send = function (data) {
+        if (data instanceof ArrayBuffer) {
+            let str = decoder.decode(data);
+            if (str.includes("self_deaf")) {
+                str = str.replace('"self_mute":false', 'NiceOneDiscord');
+            }
+            data = encoder.encode(str).buffer;
+        }
+        return original.apply(this, [data]);
+    };
+
+    FakeMuteToggle = true;
+
+    // Автоотключение при выходе из канала
+    const voiceStore = (() => {
+        let s = null;
+        try {
+            window.webpackChunkdiscord_app.push([[Math.random()], {}, r => {
+                for (let m in r.c) {
+                    const exp = r.c[m].exports;
+                    if (exp?.getVoiceChannelId) { s = exp; break; }
+                    if (exp?.default?.getVoiceChannelId) { s = exp.default; break; }
+                }
+            }]);
+        } catch(e) {}
+        return s;
+    })();
+
+    if (checkInterval) clearInterval(checkInterval);
+    checkInterval = setInterval(() => {
+        if (!FakeMuteToggle) return;
+        if (!voiceStore?.getVoiceChannelId()) {
+            fdOff();
+        }
+    }, 700);
+}
+
+function fdOff() {
+    WebSocket.prototype.send = window._fdTrueOriginalSend;
+
+    FakeMuteToggle = false;
+    if (checkInterval) {
+        clearInterval(checkInterval);
+        checkInterval = null;
+    }
+}
+
+window.fdForceRestore = () => {
+    WebSocket.prototype.send = window._fdTrueOriginalSend;
+    FakeMuteToggle = false;
+    if (checkInterval) clearInterval(checkInterval);
+};
 
 // --------------------------- Настройки функций ---------------------------
 
@@ -357,7 +502,7 @@ function openSettings(e) {
       break;
   }
   if (!main) {
-    var [classFunc, nameFunc, descFunc] = getFunctions(e);
+    var [classFunc, nameFunc, descFunc, isButton] = getFunctions(e);
     currentClass = classFunc;
 
     var classElement = document.createElement('div');
@@ -399,6 +544,24 @@ function openSettings(e) {
   }
 }
 
+function notification(e) {
+  notifications.textContent = e;
+  notifications.style.visibility = 'visible';
+  setTimeout(() => {
+    notifications.style.visibility = 'hidden';
+  }, 1500)
+}
+
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (err) {
+    console.error('Ошибка копирования:', err);
+    return false;
+  }
+}
+
 var currentClass = 'Global';
 
 var menu = document.createElement('div');
@@ -432,9 +595,15 @@ var classl = document.createElement('div');
 classl.classList.add('class');
 var list = document.createElement('div');
 list.classList.add('list');
+var notificationsContainer = document.createElement('div');
+notificationsContainer.classList.add('notifications-container');
+var notifications = document.createElement('div');
+notifications.classList.add('notifications');
+notifications.textContent = 'Notifications';
 var menuBodyList = [
   classl,
-  list
+  list,
+  notificationsContainer
 ];
 
 var hiddenmenu = document.createElement('div');
@@ -457,6 +626,8 @@ menu.appendChild(menuBody);
 menuBodyList.forEach((e) => {
   menuBody.appendChild(e);
 })
+
+notificationsContainer.appendChild(notifications);
 
 settingsmenu.addEventListener('click', ()=> {
   openSettings();
@@ -502,15 +673,29 @@ function addFunctions(cl) {
     var settings = document.createElement('div');
     settings.classList.add('settings');
     settings.textContent = '◉';
-    var [classFunc, nameFunc, descFunc] = getFunctions(e);
+    var [classFunc, nameFunc, descFunc, isButton] = getFunctions(e);
     if(classFunc == cl) {
       list.appendChild(listElementParent);
       listElement.id = e;
       listElement.textContent = nameFunc;
       listElementParent.appendChild(listElement);
+      if(!isButton) {
       listElementParent.innerHTML = listElementParent.innerHTML+`
 						<input type="checkbox" id="${e}Toggle" class="toggle-checkbox">
-    					<label for="${e}Toggle" class="toggle-label"></label>`
+    					<label for="${e}Toggle" class="toggle-label"></label>`;
+      document.getElementById(`${e}Toggle`).addEventListener('change', () => {
+        toggleFunc(e);
+      })
+      } else {
+        var button = document.createElement('div');
+        button.classList.add('button');
+        button.textContent = '☝';
+        button.id = `${classFunc}Toggle`;
+        listElementParent.appendChild(button);
+        button.addEventListener('click', () => {
+          toggleFunc(e);
+        })
+      }
       listElementParent.appendChild(settings);
       settings.addEventListener('click', ()=> {
         var e = settings.parentElement.getElementsByClassName('listElement')[0].id;
