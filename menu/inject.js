@@ -25,6 +25,7 @@ style.textContent = `
     top:25%;
     font-family: 'DotGothic16';
     user-select: none;
+    z-index: 99999;
   }
 
   .menuTitle {
@@ -234,8 +235,8 @@ style.textContent = `
     padding-left: 1%;
     padding-right: 1%;
     pointer-events: none;
+    margin-bottom: 1%;
     transition: .2s ease;
-    visibility: hidden;
   }
 
   .hiddenmenu {
@@ -344,7 +345,7 @@ style.textContent = `
 
 document.head.appendChild(style);
 
-var functionlist = ['FileData', 'InvisibleText', 'FakeMute'];
+var functionlist = ['FileData', 'FakeMute'];
 var classesList = ['Global', 'Text', 'Voice'];
 
 
@@ -361,12 +362,12 @@ function getFunctions(func) {
       descFunc = 'Изменяет данные файлов';
       isButton = false;
       break;
-    case 'InvisibleText':
-      classFunc = 'Text';
-      nameFunc = 'Невидимый текст';
-      descFunc = 'Делает текст невидимым';
-      isButton = true;
-      break;
+    // case 'InvisibleText':
+    //   classFunc = 'Text';
+    //   nameFunc = 'Невидимый текст';
+    //   descFunc = 'Делает текст невидимым';
+    //   isButton = true;
+    //   break;
     case 'FakeMute':
       classFunc = 'Voice';
       nameFunc = 'Фейковый мут';
@@ -384,28 +385,27 @@ function getFunctions(func) {
 
 var FileDataToggle, FakeMuteToggle = false;
 var checkInterval = null;
+var message = null;
+var typeNotification = null;
 
 function toggleFunc(e) {
   switch(e) {
     case 'FileData':
       FileDataToggle = !FileDataToggle;
-      if(FileDataToggle) {
-
-      }
+      message = FileDataToggle ? 'Подмена данных файлов включена' : 'Подмена данных файлов выключена'
+      typeNotification = FileDataToggle ? 'on' : 'off';
+      notification(message, typeNotification);
       break;
-    case 'InvisibleText':
-      copyToClipboard('123');
-      notification('Текст скопирован');
-      break;
+    // case 'InvisibleText':
+    //   copyToClipboard('123');
+    //   notification('Текст скопирован');
+    //   break;
     case 'FakeMute':
       FakeMuteToggle = !FakeMuteToggle;
-      if(FakeMuteToggle) {
-        fdOn();
-        notification('Фейковый мут включен');
-      } else {
-        fdOff();
-        notification('Фейковый мут выключен');
-      }
+      FakeMuteToggle ? fdOn() : fdOff();
+      message = FakeMuteToggle ? 'Фейковый мут включен' : 'Фейковый мут выключен';
+      typeNotification = FakeMuteToggle ? 'on' : 'off';
+      notification(message, typeNotification);
       break;
     default:
       break;
@@ -483,6 +483,10 @@ window.fdForceRestore = () => {
 
 // --------------------------- Настройки функций ---------------------------
 
+const menuConfig = {
+  notificationDelay: 1.5 // *1000
+};
+
 function openSettings(e) {
   clearMenu();
   var main = false;
@@ -491,9 +495,9 @@ function openSettings(e) {
     case 'FileData':
       
       break;
-    case 'InvisibleText':
+    // case 'InvisibleText':
       
-      break;
+    //   break;
     case 'FakeMute':
       
       break;
@@ -544,12 +548,29 @@ function openSettings(e) {
   }
 }
 
-function notification(e) {
+// Оповещения
+
+function notification(e, type) {
+
+  var notifications = document.createElement('div');
+  notifications.classList.add('notifications');
   notifications.textContent = e;
-  notifications.style.visibility = 'visible';
+  switch(type) {
+    case 'on':
+      notifications.style.color = "#0F913C";
+      break;
+    case 'off':
+      notifications.style.color = "#910F0F";
+      break;
+    default:
+      notifications.style.color = "#aaa";
+      break;
+  }
+  notificationsContainer.appendChild(notifications);
+
   setTimeout(() => {
-    notifications.style.visibility = 'hidden';
-  }, 1500)
+    notifications.remove();
+  }, menuConfig.notificationDelay*1000);
 }
 
 async function copyToClipboard(text) {
@@ -597,9 +618,6 @@ var list = document.createElement('div');
 list.classList.add('list');
 var notificationsContainer = document.createElement('div');
 notificationsContainer.classList.add('notifications-container');
-var notifications = document.createElement('div');
-notifications.classList.add('notifications');
-notifications.textContent = 'Notifications';
 var menuBodyList = [
   classl,
   list,
@@ -626,8 +644,6 @@ menu.appendChild(menuBody);
 menuBodyList.forEach((e) => {
   menuBody.appendChild(e);
 })
-
-notificationsContainer.appendChild(notifications);
 
 settingsmenu.addEventListener('click', ()=> {
   openSettings();
